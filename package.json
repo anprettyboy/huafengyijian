@@ -1,0 +1,23 @@
+{
+  "name": "huafengyijian",
+  "version": "1.0.0",
+  "description": "blog",
+  "main": "index.js",
+  "scripts": {
+    "docs:dev": "vuepress dev docs",
+    "docs:build": "vuepress build docs"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/anprettyboy/huafengyijian.git"
+  },
+  "author": "marthers",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/anprettyboy/huafengyijian/issues"
+  },
+  "homepage": "https://github.com/anprettyboy/huafengyijian#readme",
+  "dependencies": {
+    "vuepress": "^1.8.2"
+  }
+}
