@@ -19,5 +19,8 @@
   "homepage": "https://github.com/anprettyboy/huafengyijian#readme",
   "dependencies": {
     "vuepress": "^1.8.2"
+  },
+  "devDependencies": {
+    "@vuepress/theme-blog": "^2.3.3"
   }
 }

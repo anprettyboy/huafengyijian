@@ -1,7 +1,7 @@
 module.exports = {
-	// base: '/github-pages-vuepress/',
+	base: '/',
 	title: 'VuePress',
-	description: 'Static website built with VuePress and deployed on Github Pages',
+	description: '一剑光寒九州颤!',
 	dest: './docs',
     head: [
         [
@@ -11,5 +11,6 @@ module.exports = {
                 href: './../favicon.ico' 
             }
         ]
-    ]
+    ],
+    theme: '@vuepress/blog'
 };
