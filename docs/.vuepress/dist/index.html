@@ -8,10 +8,11 @@
     
     <meta name="description" content="">
     
-    <link rel="preload" href="/assets/css/0.styles.e4d8b86b.css" as="style"><link rel="preload" href="/assets/js/app.6a1b270b.js" as="script"><link rel="preload" href="/assets/js/2.8f141e8e.js" as="script"><link rel="preload" href="/assets/js/7.c8212c50.js" as="script"><link rel="prefetch" href="/assets/js/3.98016aeb.js"><link rel="prefetch" href="/assets/js/4.9c0d3927.js"><link rel="prefetch" href="/assets/js/5.8fb2962b.js"><link rel="prefetch" href="/assets/js/6.7a505dc8.js">
+    <link rel="preload" href="/assets/css/0.styles.e4d8b86b.css" as="style"><link rel="preload" href="/assets/js/app.e2b38fc6.js" as="script"><link rel="preload" href="/assets/js/2.8f141e8e.js" as="script"><link rel="preload" href="/assets/js/7.778a7321.js" as="script"><link rel="prefetch" href="/assets/js/3.98016aeb.js"><link rel="prefetch" href="/assets/js/4.9c0d3927.js"><link rel="prefetch" href="/assets/js/5.8fb2962b.js"><link rel="prefetch" href="/assets/js/6.7a505dc8.js">
     <link rel="stylesheet" href="/assets/css/0.styles.e4d8b86b.css">
   </head>
   <body>
+      <h3>聊聊常见的Asset Chunk Optimization卡顿</h3>
     <div id="app" data-server-rendered="true"><div class="theme-container no-sidebar"><header class="navbar"><div class="sidebar-button"><svg xmlns="http://www.w3.org/2000/svg" aria-hidden="true" role="img" viewBox="0 0 448 512" class="icon"><path fill="currentColor" d="M436 124H12c-6.627 0-12-5.373-12-12V80c0-6.627 5.373-12 12-12h424c6.627 0 12 5.373 12 12v32c0 6.627-5.373 12-12 12zm0 160H12c-6.627 0-12-5.373-12-12v-32c0-6.627 5.373-12 12-12h424c6.627 0 12 5.373 12 12v32c0 6.627-5.373 12-12 12zm0 160H12c-6.627 0-12-5.373-12-12v-32c0-6.627 5.373-12 12-12h424c6.627 0 12 5.373 12 12v32c0 6.627-5.373 12-12 12z"></path></svg></div> <a href="/" aria-current="page" class="home-link router-link-exact-active router-link-active"></a> <div class="links"><div class="search-box"><input aria-label="Search" autocomplete="off" spellcheck="false" value=""> <!----></div> <!----></div></header> <div class="sidebar-mask"></div> <aside class="sidebar"><!---->  <!----> </aside> <main class="page"> <div class="theme-default-content content__default"><h2 id="聊聊常见的asset-chunk-optimization卡顿"><a href="#聊聊常见的asset-chunk-optimization卡顿" class="header-anchor">#</a> 聊聊常见的Asset Chunk Optimization卡顿</h2> <p><b>项</b>目中使用Webpack的项目，在每次编辑保存时候，总会看到热更新卡顿异常的Asset chunk optimization 9*%...,尤其是当项目大了以后，修改一个简单的css，webpack热更新都很慢。通过观察可以发现大部分的时间都耗在百分之九十(几) Asset Chunk Optimization 这一步上. 这时候对于前端工程师而言，是无比浪费时间(煎熬)的，笔者个人而言，每天编码工作，大量的Control Save(保存)操作据不完全统计至少有几百上千次.目前构建工具而言，前端业内毫无疑问Webpack 占据着绝对统治地位,尤其在现在React Vue等主流组件化框架所建立的工程而言，每天的日常工作需要更改并保存大量的文件，每一次的保存势必要触发热更新，光是一个保存按钮就已经涉及到了Webpack优化的问题了
 这个问题也可以简单概括为<b>'webpack单页面，项目较大时，编译热加载缓慢'</b>....进而导致降低开发效率(毫无意义的等待)</p> <p>我们大概分析下热更新卡顿的原因以及解决思路:</p> <p>讲到热更新之前，有必要了解下热更新是啥？</p> <p>热更新,英文全名Hot Module Reloading，缩写为HMR。引用官方文档，热更新是：使得应用在运行状态下，不重载刷新就能更新、增加、移除模块的机制.</p> <ol><li><b>若</b>是多页应用,问题可能是出在html-webpack-plugin插件上，可以引入另一个插件html-webpack-plugin-for-multihtml测试下速度</li></ol> <ul><li>1.1 安装html-webpack-plugin-for-multihtml</li></ul> <div class="language- extra-class"><pre class="language-text"><code> npm i html-webpack-plugin-for-multihtml--save-dev
 </code></pre></div><ul><li>1.2 更改配置</li></ul> <div class="language- extra-class"><pre class="language-text"><code>newHtmlWebpackPlugin({ 
@@ -23,7 +24,7 @@ filename:'assets/admin.html',
 multihtmlCache:true// 解决多页打包的关键
 
 }）
-</code></pre></div><ol start="2"><li><b>减少不必要</b>的文件监听,加快webpack编译</li></ol> <ul><li>2.1 利用babel-loader缓存参数</li></ul> <div class="language- extra-class"><pre class="language-text"><code>module.exports = {
+</code></pre></div><ol start="2"><li><b>减少不必要</b>的文件监听,加快webpack编译</li></ol> <ul><li>2.1 优化Loader,优化Loader的文件搜索范围,利用babel-loader缓存参数</li></ul> <div class="language- extra-class"><pre class="language-text"><code>module.exports = {
    module: {
        noParse: /node_modules\/(jquey|moment|chart\.js)/,
        rules: [
@@ -36,6 +37,7 @@ multihtmlCache:true// 解决多页打包的关键
        ]
    }
 }
+</code></pre></div><p>把Babel编译过的文件缓存起来,下次只需要编译更改过的代码文件即可</p> <div class="language- extra-class"><pre class="language-text"><code>loader: 'babel-loader?cacheDirectory=ture'
 </code></pre></div><div class="language- extra-class"><pre><code>- 2.2 忽略掉一些大的node_modules里面的模块
 </code></pre></div><div class="language- extra-class"><pre class="language-text"><code>module.exports = {
     module: {
@@ -67,6 +69,6 @@ for (let moduleName of modules) {
     buildEntries[moduleName] = path.join(resolve('src'), 'modules', moduleName, 'main.js');
 }
 </code></pre></div></div> <footer class="page-edit"><!----> <!----></footer> <!----> </main></div><div class="global-ui"></div></div>
-    <script src="/assets/js/app.6a1b270b.js" defer></script><script src="/assets/js/2.8f141e8e.js" defer></script><script src="/assets/js/7.c8212c50.js" defer></script>
+    <script src="/assets/js/app.e2b38fc6.js" defer></script><script src="/assets/js/2.8f141e8e.js" defer></script><script src="/assets/js/7.778a7321.js" defer></script>
   </body>
 </html>
